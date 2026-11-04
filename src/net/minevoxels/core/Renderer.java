@@ -5,7 +5,6 @@ import net.minevoxels.core.renderer.ShaderManager;
 import net.minevoxels.core.renderer.TextureManager;
 import net.minevoxels.core.renderer.UniformManager;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 
 public class Renderer {
     private final MeshManager mesh = new MeshManager();
