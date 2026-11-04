@@ -1,6 +1,7 @@
 package net.minevoxels.core;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -52,6 +53,13 @@ public class Window {
                 glfwSetWindowShouldClose(window, true);
             }
         });
+
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
+            System.err.println("OpenGL Debug: " + memUTF8(message, length));
+        }, 0);
+
 
         glfwShowWindow(window);
     }
