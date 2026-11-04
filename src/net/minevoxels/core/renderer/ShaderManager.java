@@ -39,9 +39,9 @@ public class ShaderManager {
         return shader;
     }
 
-    public void initBasicProgram(String type) {
-        int vertexShader = initShader(GL_VERTEX_SHADER, "vertex" + type);
-        int fragmentShader = initShader(GL_FRAGMENT_SHADER, "fragment" + type);
+    public void initBasicProgram(String vname, String fname) {
+        int vertexShader = initShader(GL_VERTEX_SHADER, vname);
+        int fragmentShader = initShader(GL_FRAGMENT_SHADER, fname);
 
         program = glCreateProgram();
 
@@ -67,16 +67,13 @@ public class ShaderManager {
         glDeleteShader(fragmentShader);
     }
 
-    public void useProgram() {
+    public void useShaderProgram() {
         glUseProgram(program);
     }
-    public void unUseProgram() {
-        glUseProgram(0);
-    }
-    public int getProgram() {
+    public int getShaderProgram() {
         return program;
     }
-    public void destroyProgram() {
+    public void destroyShaderProgram() {
         glDeleteProgram(program);
     }
 }

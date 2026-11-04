@@ -23,27 +23,23 @@ public class Renderer {
     };
 
     public void createRenderer() {
-        mesh.addVertices(vertices);
-        mesh.addIndices(indices);
+        mesh.addMeshData(vertices, indices);
 
-        mesh.createBuffers();
+        mesh.flushMesh();
 
-        shader.initBasicProgram("Basic");
+        shader.initBasicProgram("vertexBasic", "fragmentBasic");
     }
 
     public void renderWorld() {
         glClearColor(0.3f, 0.6f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.useProgram();
-        mesh.bindVAO();
-        GL11.glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
-        mesh.unbindVAO();
-        shader.unUseProgram();
+        shader.useShaderProgram();
+        mesh.drawMesh();
     }
 
     public void destroyRenderer() {
-        shader.destroyProgram();
-        mesh.destroyBuffers();
+        shader.destroyShaderProgram();
+        mesh.destroyMeshData();
     }
 }
