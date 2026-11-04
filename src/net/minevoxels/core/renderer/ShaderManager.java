@@ -67,8 +67,8 @@ public class ShaderManager {
         glDeleteShader(fragmentShader);
     }
 
-    public void useShaderProgram() {
-        glUseProgram(program);
+    public void useShaderProgram(boolean isUse) {
+        glUseProgram(isUse ? program : 0);
     }
     public int getShaderProgram() {
         return program;

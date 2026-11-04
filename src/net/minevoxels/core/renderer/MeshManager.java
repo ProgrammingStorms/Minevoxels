@@ -6,8 +6,8 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL46.*;
 
 public class MeshManager {
-    private int vertexSize = 8192;
-    private int indicesSize = 8192;
+    private int vertexSize = 262144;
+    private int indicesSize = 262144;
     private FloatBuffer vertices = MemoryUtil.memAllocFloat(vertexSize);
     private IntBuffer indices = MemoryUtil.memAllocInt(indicesSize);
     private int vertexCount;
@@ -16,22 +16,8 @@ public class MeshManager {
     private int EBO;
 
     public void addMeshData(float[] dataVertices, int[] dataIndices) {
-        if(vertices.position() >= vertices.capacity() - 512) {
-            int nf = vertexSize * 2;
-            vertices = MemoryUtil.memRealloc(vertices, nf);
-            vertexSize = nf;
-        }
-
         vertices.put(dataVertices);
-
-        if(indices.position() >= vertices.capacity() - 512) {
-            int ni = indicesSize * 2;
-            indices = MemoryUtil.memRealloc(indices, ni);
-            indicesSize = ni;
-        }
-
         indices.put(dataIndices);
-
         vertexCount += dataIndices.length;
     }
 
@@ -48,38 +34,28 @@ public class MeshManager {
         glNamedBufferData(EBO, indices, GL_DYNAMIC_DRAW);
 
         glEnableVertexArrayAttrib(VAO, 0);
+        glEnableVertexArrayAttrib(VAO, 1);
+        glEnableVertexArrayAttrib(VAO, 2);
 
         glVertexArrayAttribBinding(VAO, 0, 0);
         glVertexArrayAttribFormat(VAO, 0, 3, GL_FLOAT, false, 0);
 
-        glVertexArrayVertexBuffer(VAO, 0, VBO, 0, 3 * Float.BYTES);
+        glVertexArrayAttribBinding(VAO, 1, 0);
+        glVertexArrayAttribFormat(VAO, 1, 2, GL_FLOAT, false, 3 * Float.BYTES);
+
+        glVertexArrayAttribBinding(VAO, 2, 0);
+        glVertexArrayAttribFormat(VAO, 2, 1, GL_FLOAT, false, 5 * Float.BYTES);
+
+        glVertexArrayVertexBuffer(VAO, 0, VBO, 0, 6 * Float.BYTES);
         glVertexArrayElementBuffer(VAO, EBO);
     }
 
     public void flushUpdatedMesh() {
-        if(vertices.position() < vertices.capacity() - 1024) {
-            vertices.flip();
-            glNamedBufferSubData(VBO, 0, vertices);
-        } else {
-            int nf = vertexSize * 2;
-            vertices = MemoryUtil.memRealloc(vertices, nf);
-            vertexSize = nf;
+        vertices.flip();
+        indices.flip();
 
-            vertices.flip();
-            glNamedBufferData(VBO, vertices, GL_DYNAMIC_DRAW);
-        }
-
-        if(indices.position() < indices.capacity() - 1024) {
-            indices.flip();
-            glNamedBufferSubData(EBO, 0, indices);
-        } else {
-            int ni = indicesSize * 2;
-            indices = MemoryUtil.memRealloc(indices, ni);
-            indicesSize = ni;
-
-            indices.flip();
-            glNamedBufferData(EBO, indices, GL_DYNAMIC_DRAW);
-        }
+        glNamedBufferSubData(VBO, 0, vertices);
+        glNamedBufferSubData(EBO, 0, indices);
     }
 
     public void destroyMeshData() {
@@ -93,6 +69,7 @@ public class MeshManager {
     public void drawMesh() {
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES,  vertexCount, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
 
     public void clearMeshData() {

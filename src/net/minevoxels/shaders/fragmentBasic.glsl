@@ -1,7 +1,11 @@
 #version 460 core
 
+in vec3 combinedTexID;
+
 out vec4 outColor;
 
+uniform sampler2DArray texArray;
+
 void main() {
-    outColor = vec4(1.0, 0.5, 0.0, 1.0);
+    outColor = texture(texArray, combinedTexID);
 }
